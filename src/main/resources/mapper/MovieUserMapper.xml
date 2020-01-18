@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shixun.mapper.MovieUserMapper">
+	<resultMap type="com.shixun.entity.MovieUser" id="userMap">
+		<id column="user_id" property="userId" jdbcType="BIGINT"/>
+		<result column="user_name" property="userName" jdbcType="VARCHAR"/>
+		<result column="user_password" property="userPassword" jdbcType="VARCHAR"/>
+		<result column="user_realname" property="userRealname" jdbcType="VARCHAR"/>
+		<result column="user_idcard" property="userIdcard" jdbcType="VARCHAR"/>
+		<result column="user_phone" property="userPhone" jdbcType="VARCHAR"/>
+		<result column="user_sex" property="userSex" jdbcType="VARCHAR"/>
+		<result column="user_headimg" property="userHeadimg" jdbcType="VARCHAR"/>
+		<result column="user_birthday" property="userBirthday" jdbcType="VARCHAR"/>
+		<result column="user_intro" property="userIntro" jdbcType="VARCHAR"/>
+		<result column="user_qq" property="userQq" jdbcType="VARCHAR"/>
+		<result column="user_email" property="userEmail" jdbcType="VARCHAR"/>
+		<result column="province" property="province" jdbcType="VARCHAR"/>
+		<result column="city" property="city" jdbcType="VARCHAR"/>
+		<result column="district" property="district" jdbcType="VARCHAR"/>
+		<result column="user_status" property="userStatus" jdbcType="INTEGER"/>
+		<result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<!-- 查询所有用户 -->
+	<select id="selectUser" resultMap="userMap">
+		SELECT
+			user_id,
+			user_name,
+			user_phone,
+			user_sex,
+			user_qq,
+			user_email,
+			province,
+			city,
+			district,
+			user_status,
+			create_time
+		FROM
+			movie_user
+		WHERE
+			user_status != 0
+	</select>
+	<!-- 删除用户（修改状态 保留数据） -->
+	<update id="deleteUser1">
+		UPDATE movie_user SET user_status=0 WHERE user_id=#{userId}
+	</update>
+	<!-- 删除用户（真正删除） -->
+	<delete id="deleteUser">
+		DELETE FROM movie_user WHERE user_id=#{userId}
+	</delete>
+	<!-- 添加用户 -->
+	<insert id="userAdd">
+		INSERT INTO movie_user (
+			user_name,
+			user_password,
+			user_phone,
+			user_sex,
+			user_email,
+			province,
+			city,
+			district,
+			user_status,
+			create_time
+		)
+		VALUES
+			(
+				#{movieUser.userName},
+				#{movieUser.userPassword},
+				#{movieUser.userPhone},
+				#{movieUser.userSex},
+				#{movieUser.userEmail},
+				#{movieUser.province},
+				#{movieUser.city},
+				#{movieUser.district},
+				1,
+				#{movieUser.createTime}
+			)
+	</insert>
+	
+	<!-- 修改用户状态 停用 -->
+	<update id="blockup">
+		UPDATE movie_user SET user_status=2 WHERE user_id=#{userId}
+	</update>
+	
+	<!-- 修改用户状态 启用 -->
+	<update id="startusing">
+		UPDATE movie_user SET user_status=1 WHERE user_id=#{userId}
+	</update>
+	
+	<!-- 根据id查询用户信息 -->
+	<select id="selectUserId" resultMap="userMap">
+		SELECT
+			*
+		FROM
+			movie_user
+		WHERE
+			user_id = #{userId} 
+	</select>
+	
+	<!-- 根据id修改用户信息 -->
+	<update id="updateUser">
+		UPDATE movie_user
+		SET
+		 user_name=#{movieUser.userName},
+		 user_phone=#{movieUser.userPhone},
+		 user_sex=#{movieUser.userSex},
+		 user_email=#{movieUser.userEmail},
+		 province=#{movieUser.province},
+		 city=#{movieUser.city},
+		 district=#{movieUser.district}
+		WHERE
+			user_id=#{movieUser.userId}
+	</update>
+	
+	<!-- 根据id修改用户密码 -->
+	<update id="updatePassword">
+		UPDATE movie_user
+		SET
+		 user_password=#{password}
+		WHERE
+			user_id=#{userId}
+	</update>
+	
+	<!-- 模糊查询用户 -->
+	<select id="selectUserLike" resultMap="userMap">
+		SELECT
+			user_id,
+			user_name,
+			user_phone,
+			user_sex,
+			user_qq,
+			user_email,
+			province,
+			city,
+			district,
+			user_status,
+			create_time
+		FROM
+			movie_user
+		WHERE
+		   (user_name LIKE concat('%',#{user},'%')
+		OR user_phone LIKE concat('%',#{user},'%')
+		OR user_email LIKE concat('%',#{user},'%'))
+		<if test="createTime2!=''">
+			AND	create_time BETWEEN #{createTime}
+			AND #{createTime2}
+		</if>
+	</select>
+	
+</mapper>

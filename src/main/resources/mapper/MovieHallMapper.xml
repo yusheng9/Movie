@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shixun.mapper.MovieHallMapper">
+	<resultMap type="com.shixun.entity.MovieHall" id="hallMap">
+		<id property="hallId" column="hall_id" jdbcType="BIGINT"/>
+		<result property="hallName" column="hall_name" jdbcType="VARCHAR"/>
+		<result property="hallCapacity" column="hall_capacity" jdbcType="VARCHAR"/>
+		<collection property="movieSchedule" ofType="com.shixun.entity.MovieSchedule">
+			<id property="scheduleId" column="schedule_id" jdbcType="BIGINT"/>
+			<result property="scheduleStartTime" column="schedule_start_time" jdbcType="VARCHAR"/>
+			<result property="schedulePrice" column="schedule_price" jdbcType="INTEGER"/>
+			<result property="scheduleRemain" column="schedule_remain" jdbcType="VARCHAR"/>
+			<result property="scheduleState" column="schedule_state" jdbcType="INTEGER"/>
+			<association property="movieFilm" javaType="com.shixun.entity.MovieFilm">
+				<id column="film_id" property="filmId" jdbcType="BIGINT"/>
+				<result column="film_name" property="filmName" jdbcType="VARCHAR"/>
+				<result column="subtitle" property="subtitle" jdbcType="VARCHAR"/>
+				<result column="film_intro" property="filmIntro" jdbcType="VARCHAR"/>
+				<result column="film_path" property="filmPath" jdbcType="VARCHAR"/>
+				<result column="film_url" property="filmUrl" jdbcType="VARCHAR"/>
+				<result column="film_img" property="filmImg" jdbcType="VARCHAR"/>
+				<result column="release_time" property="releaseTime" jdbcType="VARCHAR"/>
+				<result column="upload_time" property="uploadTime" jdbcType="VARCHAR"/>
+				<result column="upload_user" property="uploadUser" jdbcType="VARCHAR"/>
+				<collection property="secondtype" ofType="com.shixun.entity.Secondtype">
+					<id column="st_id" property="stId" jdbcType="BIGINT"/>
+					<result column="st_name" property="stName" jdbcType="VARCHAR"/>
+					<association property="type" javaType="com.shixun.entity.Type">
+						<id column="type_id" property="typeId" jdbcType="BIGINT"/>
+						<result column="stype_name" property="typeName" jdbcType="VARCHAR"/>
+					</association>
+				</collection>
+			</association>
+		</collection>
+	</resultMap>
+</mapper>

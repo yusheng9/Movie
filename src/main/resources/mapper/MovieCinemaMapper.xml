@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shixun.mapper.MovieCinemaMapper">
+	<resultMap type="com.shixun.entity.MovieCinema" id="cinemaMap">
+		<id property="cinemaId" column="cinema_id" jdbcType="BIGINT"/>
+		<result property="cinemaName" column="cinema_name" jdbcType="VARCHAR"/>
+		<result property="cinemaAddress" column="cinema_address" jdbcType="VARCHAR"/>
+		<collection property="movieHall" ofType="com.shixun.entity.MovieHall">
+			<id property="hallId" column="hall_id" jdbcType="BIGINT"/>
+			<result property="hallName" column="hall_name" jdbcType="VARCHAR"/>
+			<result property="hallCapacity" column="hall_capacity" jdbcType="VARCHAR"/>
+		</collection>
+	</resultMap>
+
+</mapper>

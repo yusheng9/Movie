@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shixun.mapper.SecondTypeMapper">
+	
+	<resultMap type="com.shixun.entity.Secondtype" id="stypeMap">
+		<id column="st_id" property="stId" jdbcType="BIGINT"/>
+		<result column="st_name" property="stName" jdbcType="VARCHAR"/>
+		<association property="type" javaType="com.shixun.entity.Type">
+			<id column="type_id" property="typeId" jdbcType="BIGINT"/>
+			<result column="type_name" property="typeName" jdbcType="VARCHAR"/>
+		</association>
+	</resultMap>
+	
+	<select id="selectSecondType" resultMap="stypeMap">
+		SELECT * FROM secondtype s,type t WHERE s.type_id=t.type_id
+	</select>
+	
+</mapper>

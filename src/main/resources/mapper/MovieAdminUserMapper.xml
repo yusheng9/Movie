@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shixun.mapper.MovieAdminUserMapper">
+	<resultMap type="com.shixun.entity.MovieAdminUser" id="adminMap">
+		<id column="auser_id" property="auserId" jdbcType="BIGINT"/>
+		<result column="auser_name" property="auserName" jdbcType="VARCHAR"/>
+		<result column="auser_password" property="auserPassword" jdbcType="VARCHAR"/>
+		<result column="auser_phone" property="auserPhone" jdbcType="VARCHAR"/>
+		<result column="auser_sex" property="auserSex" jdbcType="VARCHAR"/>
+		<result column="auser_email" property="auserEmail" jdbcType="VARCHAR"/>
+		<result column="auser_status" property="auserStatus" jdbcType="INTEGER"/>
+		<result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+		<association property="movieRole" javaType="com.shixun.entity.MovieRole">
+			<id column="role_id" property="roleId" jdbcType="BIGINT"/>
+			<result column="role_name" property="roleName" jdbcType="VARCHAR"/>
+			<result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+		</association>
+	</resultMap>
+	
+	<!-- 查询管理员用户 -->
+	<select id="selectAdminUser" resultMap="adminMap">
+		select * from movie_admin_user au,movie_role r WHERE au.auser_name!=#{aname} and au.auser_status != 0 and au.role_id=r.role_id
+	</select>
+	<!-- 管理员登录 -->
+	<select id="adminLogin" resultMap="adminMap">
+		select * from movie_admin_user au,movie_role r where au.auser_name=#{auserName} and au.auser_password=#{auserPassword} and au.role_id=r.role_id
+	</select>
+	
+	<!-- 修改用管理员户状态 停用 -->
+	<update id="ablockup">
+		UPDATE movie_admin_user SET auser_status=2 WHERE auser_id=#{auserId}
+	</update>
+	
+	<!-- 修改管理员用户状态 启用 -->
+	<update id="astartusing">
+		UPDATE movie_admin_user SET auser_status=1 WHERE auser_id=#{auserId}
+		<!-- in <foreach collection="" open="(" close=")" separator="," item="">
+			ietem
+		</foreach> -->
+	</update>
+	
+	<!-- 根据id查询管理员用户信息 -->
+	<select id="selectAdminId" resultMap="adminMap">
+		select * from movie_admin_user au,movie_role r WHERE au.auser_id=#{auserId} and au.role_id=r.role_id
+	</select>
+	
+	<!-- 根据id修改用户信息 -->
+	<update id="updateAdmin">
+		UPDATE movie_admin_user
+		SET
+		 auser_name=#{movieAdminUser.auserName},
+		 auser_phone=#{movieAdminUser.auserPhone},
+		 auser_sex=#{movieAdminUser.auserSex},
+		 auser_email=#{movieAdminUser.auserEmail},
+		 role_id=#{movieAdminUser.movieRole.roleId}
+		WHERE
+			auser_id=#{movieAdminUser.auserId}
+	</update>
+	
+	<!-- 根据id修改用户密码 -->
+	<update id="updatePassword">
+		UPDATE movie_admin_user
+		SET
+		 auser_password=#{password}
+		WHERE
+			auser_id=#{auserId}
+	</update>
+	
+	<!-- 删除管理员用户（修改状态 保留数据） -->
+	<update id="deleteAdmin">
+		UPDATE movie_admin_user SET auser_status=0 WHERE auser_id=#{auserId}
+	</update>
+	<!-- 删除管理员用户（真正删除） -->
+	<delete id="">
+		DELETE FROM movie_admin_user WHERE auser_id=#{auserId}
+	</delete>
+	<!-- 添加管理员用户 -->
+	<insert id="adminAdd">
+		INSERT INTO movie_admin_user (
+			auser_name,
+			auser_password,
+			auser_phone,
+			auser_sex,
+			auser_email,
+			role_id,
+			auser_status,
+			create_time
+		)
+		VALUES
+			(
+				#{movieAdminUser.auserName},
+				#{movieAdminUser.auserPassword},
+				#{movieAdminUser.auserPhone},
+				#{movieAdminUser.auserSex},
+				#{movieAdminUser.auserEmail},
+				#{movieAdminUser.movieRole.roleId},
+				1,
+				#{movieAdminUser.createTime}
+			)
+	</insert>
+	<!-- 模糊查询用户 -->
+	<select id="selectAdminLike" resultMap="adminMap">
+		SELECT
+			*
+		FROM
+			movie_admin_user au,movie_role r
+		WHERE
+		   (au.auser_name LIKE concat('%',#{user},'%')
+		OR au.auser_phone LIKE concat('%',#{user},'%')
+		OR au.auser_email LIKE concat('%',#{user},'%'))
+		AND au.role_id=r.role_id 
+		<if test="createTime2!='' and createTime2!=' 23:59:59'">
+			AND	au.create_time &gt;= #{createTime}
+			AND au.create_time &lt;= #{createTime2}
+		</if>
+	</select>
+	
+</mapper>
